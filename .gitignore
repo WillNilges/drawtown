@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Images
+img/
+img/*
+*.png
+
+cmake_install.cmake
+CMakeFiles/
+CMakeFiles/*
+CMakeCache.txt
