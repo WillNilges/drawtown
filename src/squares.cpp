@@ -72,6 +72,32 @@ static void findStructures(Mat& image, vector<vector<Point> >& squares)
     }
 }
 
+static void findCircles(Mat& image) {
+    Mat gray;
+    cvtColor(image, gray, COLOR_BGR2GRAY);
+    medianBlur(gray, gray, 5);
+    vector<Vec3f> circles;
+    HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
+                 gray.rows/8,  // change this value to detect circles with different distances to each other
+                 100, 30, 30, 400 // change the last two parameters
+            // (min_radius & max_radius) to detect larger circles
+    );
+
+    for( size_t i = 0; i < circles.size(); i++ )
+    {
+        Vec3i c = circles[i];
+        Point center = Point(c[0], c[1]);
+        // circle center
+        circle( image, center, 1, Scalar(0,100,100), 3, LINE_AA);
+        // circle outline
+        int radius = c[2];
+        circle( image, center, radius, Scalar(255,0,255), 3, LINE_AA);
+    }
+    
+    imwrite("circleOutput.jpg", image);
+
+}
+
 // the function draws all the squares in the image
 static void drawSquares(Mat& image, const vector<vector<Point>>& squares)
 {
@@ -81,7 +107,7 @@ static void drawSquares(Mat& image, const vector<vector<Point>>& squares)
         int n = (int)squares[i].size();
         polylines(image, &p, &n, 1, true, Scalar(0,200,0), 9, LINE_AA);
     }
-    imwrite("output.jpg", image);
+    // imwrite("output.jpg", image);
 }
 
 static void writeCoords(const vector<vector<Point>>& squares, string outPath, double scale) {
@@ -126,7 +152,10 @@ int main(int argc, char** argv)
         
     findStructures(image, structures);
     drawSquares(image, structures);
+    findCircles(image);
+    // drawCircles(image);
     // writeCoords(squares, argv[2], 0.1);
     // findFills(image);
+    
     return 0;
 }
