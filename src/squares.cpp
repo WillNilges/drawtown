@@ -27,7 +27,6 @@ void findSquares(const Mat& image, vector<vector<Point>>& squares)
     int c = 0;
     int ch[] = {c, 0};
     mixChannels(&timg, 1, &gray0, 1, ch, 1);
-    imwrite("tmp1.jpg", gray0);
     gray = gray0 >= (4+1)*255/N;
     // find contours and store them all as a list
     findContours(gray, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);

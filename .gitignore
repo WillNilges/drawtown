@@ -41,3 +41,7 @@ cmake_install.cmake
 CMakeFiles/
 CMakeFiles/*
 CMakeCache.txt
+
+*.log
+
+drawtown

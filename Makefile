@@ -130,30 +130,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named main
+# Target rules for targets named drawtown
 
 # Build rule for target.
-main: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main
-.PHONY : main
+drawtown: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 drawtown
+.PHONY : drawtown
 
 # fast build rule for target.
-main/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
-.PHONY : main/fast
-
-#=============================================================================
-# Target rules for targets named squares
-
-# Build rule for target.
-squares: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 squares
-.PHONY : squares
-
-# fast build rule for target.
-squares/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/build
-.PHONY : squares/fast
+drawtown/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/drawtown.dir/build.make CMakeFiles/drawtown.dir/build
+.PHONY : drawtown/fast
 
 src/main.o: src/main.cpp.o
 
@@ -161,7 +148,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/drawtown.dir/build.make CMakeFiles/drawtown.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -170,7 +157,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/drawtown.dir/build.make CMakeFiles/drawtown.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -179,7 +166,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/drawtown.dir/build.make CMakeFiles/drawtown.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/squares.o: src/squares.cpp.o
@@ -188,7 +175,7 @@ src/squares.o: src/squares.cpp.o
 
 # target to build an object file
 src/squares.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/src/squares.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/drawtown.dir/build.make CMakeFiles/drawtown.dir/src/squares.cpp.o
 .PHONY : src/squares.cpp.o
 
 src/squares.i: src/squares.cpp.i
@@ -197,7 +184,7 @@ src/squares.i: src/squares.cpp.i
 
 # target to preprocess a source file
 src/squares.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/src/squares.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/drawtown.dir/build.make CMakeFiles/drawtown.dir/src/squares.cpp.i
 .PHONY : src/squares.cpp.i
 
 src/squares.s: src/squares.cpp.s
@@ -206,7 +193,7 @@ src/squares.s: src/squares.cpp.s
 
 # target to generate assembly for a file
 src/squares.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/src/squares.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/drawtown.dir/build.make CMakeFiles/drawtown.dir/src/squares.cpp.s
 .PHONY : src/squares.cpp.s
 
 # Help Target
@@ -217,8 +204,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... main"
-	@echo "... squares"
+	@echo "... drawtown"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
