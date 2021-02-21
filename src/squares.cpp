@@ -66,7 +66,7 @@ static void findStructures(Mat& image, vector<vector<Point> >& squares)
             // if cosines of all angles are small
             // (all angles are ~90 degree) then write quandrange
             // vertices to resultant sequence
-            if(maxCosine < 0.1 && hierarchy[i][3] >= 0)
+            if(maxCosine < 0.3 && hierarchy[i][3] >= 0)
                     squares.push_back(approx);
         }
     }
