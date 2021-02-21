@@ -21,6 +21,14 @@ static double angle(Point pt1, Point pt2, Point pt0)
     return (dx1*dx2 + dy1*dy2)/sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
 
+double ptDist(int x1, int y1, int x2, int y2){
+    int distancex = (x2 - x1) * (x2 - x1);
+    int distancey = (y2 - y1) * (y2 - y1);
+
+    double distance = sqrt(distancex - distancey); 
+    return distance;
+}
+
 // returns sequence of squares detected on the image.
 static void findSquares(Mat& image, vector<vector<Point> >& squares)
 {
@@ -88,27 +96,7 @@ static void findSquares(Mat& image, vector<vector<Point> >& squares)
                     // (all angles are ~90 degree) then write quandrange
                     // vertices to resultant sequence
                     if(maxCosine < 0.1 && hierarchy[i][3] >= 0)
-
-                        // Try to detect if the square in question is not bounded
-                        // within another square
-                        if (squares.size() == 0) {
-                            squares.push_back(approx);
-                        } else {
-                            int sqrSz = squares.size();
-                            for (int k = 0; k < sqrSz; k++) {
-                                vector<Point> square = squares.at(k);
-                                cout << abs(square.at(0).x - approx.at(0).x) << " " << abs(square.at(0).y - approx.at(0).y) << "\n";
-                                if (abs(square.at(0).x - approx.at(0).x > 10) && abs(square.at(0).y - approx.at(0).y > 10)) {
-                                    squares.push_back(approx);
-                                    sqrSz++;    
-                                }
-                                // cout << approx.at(0).x << " " << approx.at(0).y << "\n";
-                                // cout << approx.at(1).x << " " << approx.at(1).y << "\n";
-                                // cout << approx.at(2).x << " " << approx.at(2).y << "\n";
-                                // cout << approx.at(3).x << " " << approx.at(3).y << "\n---\n";
-                                // squares.push_back(approx);
-                            }
-                        }
+                        squares.push_back(approx);
                 }
             }
         }   
@@ -139,6 +127,28 @@ static void writeCoords(const vector<vector<Point>>& squares, string outPath, do
     }
 
     cmdout.close();
+}
+
+static void filterSquares(vector<vector<Point>>& squares){
+    vector<vector<Point>> newSquares;
+    for (int i = 0; i < squares.size(); i++){
+        vector<Point> currentSquare = squares.at(i);
+        bool canAdd = true;
+        for (int j = 0; j < i; j++) {
+            if (i != j) {
+                vector<Point> testSquare = squares.at(j);
+                int k = 0;
+                if (ptDist(currentSquare.at(k).x, currentSquare.at(k).y, testSquare.at(k).x, testSquare.at(k).y) < 350) {
+                    canAdd = false;
+                    break;
+                }
+            }
+        }
+        if (canAdd) 
+            newSquares.push_back(currentSquare);
+    }
+
+    squares = newSquares;
 }
 
 static void diffSquares(
@@ -215,6 +225,7 @@ int main(int argc, char** argv)
         cout << "Couldn't load " << filename << endl;
         
     findSquares(image, squares);
+    filterSquares(squares);
     // diffSquares(image, squares, blackSquares, redSquares, blueSquares);
     drawSquares(image, squares);
     // writeCoords(squares, argv[2], 0.1);
