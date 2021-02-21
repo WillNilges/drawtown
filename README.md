@@ -8,7 +8,11 @@ Whiteboard -> Minetest interface. Prototype your ideas™
 
 or
 
-`dnf install opencv-dev`
+`apt install opencv-dev`
+
+or
+
+`pacman -S opencv vtk hdf5`
 
 Take your pick.
 
