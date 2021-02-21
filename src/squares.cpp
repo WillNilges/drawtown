@@ -22,7 +22,7 @@ static double angle(Point pt1, Point pt2, Point pt0)
 }
 
 // returns sequence of squares detected on the image.
-static void findStructures(Mat& image, vector<vector<Point> >& squares)
+static void findSquares(Mat& image, vector<vector<Point> >& squares)
 {
     squares.clear();
     Mat pyr, timg, gray0(image.size(), CV_8U), gray;
@@ -31,44 +31,87 @@ static void findStructures(Mat& image, vector<vector<Point> >& squares)
     pyrUp(pyr, timg, image.size());
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
-    int c = 0;
-    int ch[] = {c, 0};
-    mixChannels(&timg, 1, &gray0, 1, ch, 1);
-    imwrite("tmp1.jpg", gray0);
-    gray = gray0 >= (4+1)*255/N;
-    // find contours and store them all as a list
-    findContours(gray, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
-
-    vector<Point> approx;
-    // test each contour
-    for(size_t i = 0; i < contours.size(); i++)
+        // find squares in every color plane of the image
+    for( int c = 0; c < 3; c++ )
     {
-        // approximate contour with accuracy proportional
-        // to the contour perimeter
-        approxPolyDP(contours[i], approx, arcLength(contours[i], true)*0.02, true);
-        // square contours should have 4 vertices after approximation
-        // relatively large area (to filter out noisy contours)
-        // and be convex.
-        // Note: absolute value of an area is used because
-        // area may be positive or negative - in accordance with the
-        // contour orientation
-        if(approx.size() == 4 &&
-            fabs(contourArea(approx)) > 1000 &&
-            isContourConvex(approx))
+        int ch[] = {c, 0};
+        mixChannels(&timg, 1, &gray0, 1, ch, 1);
+        // try several threshold levels
+        for( int l = 0; l < N; l++ )
         {
-            double maxCosine = 0;
-            for(int j = 2; j < 5; j++)
+            // hack: use Canny instead of zero threshold level.
+            // Canny helps to catch squares with gradient shading
+            if( l == 0 )
             {
-                // find the maximum cosine of the angle between joint edges
-                double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
-                maxCosine = MAX(maxCosine, cosine);
+                // apply Canny. Take the upper threshold from slider
+                // and set the lower to 0 (which forces edges merging)
+                Canny(gray0, gray, 0, thresh, 5);
+                // dilate canny output to remove potential
+                // holes between edge segments
+                dilate(gray, gray, Mat(), Point(-1,-1));
             }
-            // if cosines of all angles are small
-            // (all angles are ~90 degree) then write quandrange
-            // vertices to resultant sequence
-            if(maxCosine < 0.1 && hierarchy[i][3] >= 0)
-                    squares.push_back(approx);
-        }
+            else
+            {
+                // apply threshold if l!=0:
+                //     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
+                gray = gray0 >= (l+1)*255/N;
+            }
+
+            // find contours and store them all as a list
+            findContours(gray, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+
+            vector<Point> approx;
+            // test each contour
+            for(size_t i = 0; i < contours.size(); i++)
+            {
+                // approximate contour with accuracy proportional
+                // to the contour perimeter
+                approxPolyDP(contours[i], approx, arcLength(contours[i], true)*0.02, true);
+                // square contours should have 4 vertices after approximation
+                // relatively large area (to filter out noisy contours)
+                // and be convex.
+                // Note: absolute value of an area is used because
+                // area may be positive or negative - in accordance with the
+                // contour orientation
+                if(approx.size() == 4 &&
+                    fabs(contourArea(approx)) > 1000 &&
+                    isContourConvex(approx))
+                {
+                    double maxCosine = 0;
+                    for(int j = 2; j < 5; j++)
+                    {
+                        // find the maximum cosine of the angle between joint edges
+                        double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
+                        maxCosine = MAX(maxCosine, cosine);
+                    }
+                    // if cosines of all angles are small
+                    // (all angles are ~90 degree) then write quandrange
+                    // vertices to resultant sequence
+                    if(maxCosine < 0.1 && hierarchy[i][3] >= 0)
+
+                        // Try to detect if the square in question is not bounded
+                        // within another square
+                        if (squares.size() == 0) {
+                            squares.push_back(approx);
+                        } else {
+                            int sqrSz = squares.size();
+                            for (int k = 0; k < sqrSz; k++) {
+                                vector<Point> square = squares.at(k);
+                                cout << abs(square.at(0).x - approx.at(0).x) << " " << abs(square.at(0).y - approx.at(0).y) << "\n";
+                                if (abs(square.at(0).x - approx.at(0).x > 10) && abs(square.at(0).y - approx.at(0).y > 10)) {
+                                    squares.push_back(approx);
+                                    sqrSz++;    
+                                }
+                                // cout << approx.at(0).x << " " << approx.at(0).y << "\n";
+                                // cout << approx.at(1).x << " " << approx.at(1).y << "\n";
+                                // cout << approx.at(2).x << " " << approx.at(2).y << "\n";
+                                // cout << approx.at(3).x << " " << approx.at(3).y << "\n---\n";
+                                // squares.push_back(approx);
+                            }
+                        }
+                }
+            }
+        }   
     }
 }
 
@@ -98,6 +141,47 @@ static void writeCoords(const vector<vector<Point>>& squares, string outPath, do
     cmdout.close();
 }
 
+static void diffSquares(
+    Mat& image,
+    const vector<vector<Point>>& squares,
+    vector<vector<Point>>& blackSquares,
+    vector<vector<Point>>& redSquares,
+    vector<vector<Point>>& blueSquares) {
+
+
+    // Check for red value above a certain threshold.
+    // Mat channel[3];
+    // split(image, channel);
+    // channel[0]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set blue channel to 0
+    // channel[1]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set green channel to 0
+    // // channel[2]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set red channel to 0
+
+    // merge(channel,3,image);
+
+    blur( image, image, Size(50, 50)); 
+    imwrite("tmp02.jpg", image);
+    
+    for (vector<Point> square : squares) {
+        Point checkPoint = { square.at(0).x, square.at(0).y };
+        int offset = 5;
+        int blue = image.at<cv::Vec3b>(checkPoint.y + offset,checkPoint.x + offset)[0];
+        int green = image.at<cv::Vec3b>(checkPoint.y + offset,checkPoint.x + offset)[1];
+        int red = image.at<cv::Vec3b>(checkPoint.y + offset,checkPoint.x + offset)[2];
+        // Vec3b bgrPixel = image.at<Vec3b>(, );
+        cout << blue << " " << green << " " << red;
+        if (blue < 150 && green < 150 && red > 150) {
+            std::cout << " - Red!\n";
+            redSquares.push_back(square);
+        } else if (blue > 150 && green < 150 && red < 150) {
+            std::cout << " - Blue!\n";
+            blueSquares.push_back(square);
+        } else {
+            std::cout << " - Black!\n";
+            blackSquares.push_back(square);
+        }
+    }
+
+}
 
 // static void findFills(Mat& image/*, vector<vector<Point>>& fillSquares*/)
 // {
@@ -111,21 +195,28 @@ static void writeCoords(const vector<vector<Point>>& squares, string outPath, do
     
 //     vector<vector<Point>> bricks;
 
-//     findStructures(image, bricks);
+//     findSquares(image, bricks);
 //     drawSquares(image, bricks);
 // }
 
 int main(int argc, char** argv)
 {
-    vector<vector<Point>> structures;
+    // For the squares we initially get
+    vector<vector<Point>> squares;
+
+    // For the types of squares
+    vector<vector<Point>> blackSquares;
+    vector<vector<Point>> redSquares;
+    vector<vector<Point>> blueSquares;
 
     string filename = samples::findFile(argv[1]);
     Mat image = imread(filename, IMREAD_COLOR);
     if(image.empty())
         cout << "Couldn't load " << filename << endl;
         
-    findStructures(image, structures);
-    drawSquares(image, structures);
+    findSquares(image, squares);
+    // diffSquares(image, squares, blackSquares, redSquares, blueSquares);
+    drawSquares(image, squares);
     // writeCoords(squares, argv[2], 0.1);
     // findFills(image);
     return 0;
