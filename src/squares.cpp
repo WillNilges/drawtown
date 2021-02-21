@@ -1,18 +1,12 @@
-#include "opencv2/core.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/highgui.hpp"
-#include <iostream>
-#include <fstream>
-
-using namespace cv;
-using namespace std;
+#include "squares.h"
 int thresh = 50, N = 11;
+
+using namespace DrawTown;
 
 // helper function:
 // finds a cosine of angle between vectors
 // from pt0->pt1 and from pt0->pt2
-static double angle(Point pt1, Point pt2, Point pt0)
+double dankAngle(Point pt1, Point pt2, Point pt0)
 {
     double dx1 = pt1.x - pt0.x;
     double dy1 = pt1.y - pt0.y;
@@ -22,7 +16,7 @@ static double angle(Point pt1, Point pt2, Point pt0)
 }
 
 // returns sequence of squares detected on the image.
-static void findSquares(Mat& image, vector<vector<Point>>& squares)
+void findSquares(Mat& image, vector<vector<Point>>& squares)
 {
     squares.clear();
     Mat pyr, timg, gray0(image.size(), CV_8U), gray;
@@ -60,7 +54,7 @@ static void findSquares(Mat& image, vector<vector<Point>>& squares)
             for(int j = 2; j < 5; j++)
             {
                 // find the maximum cosine of the angle between joint edges
-                double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
+                double cosine = fabs(dankAngle(approx[j%4], approx[j-2], approx[j-1]));
                 maxCosine = MAX(maxCosine, cosine);
             }
             // if cosines of all angles are small
@@ -72,7 +66,8 @@ static void findSquares(Mat& image, vector<vector<Point>>& squares)
     }
 }
 
-static void findCircles(Mat& image, vector<Vec3f>& circles) {
+void findCircles(Mat& image, vector<Vec3f>& circles)
+{
     Mat gray;
     cvtColor(image, gray, COLOR_BGR2GRAY);
     medianBlur(gray, gray, 5);
@@ -84,24 +79,8 @@ static void findCircles(Mat& image, vector<Vec3f>& circles) {
     );
 }
 
-// If a tree and a house get in a fight, the house wins.
-// static void detectOverlap(vector<vector<Point>>& squares, vector<Vec3f> circles) {
-//     int skew = 0;
-//     for (int i = 0; i < circles.size(); i++) {
-//         for (int k = 0; k < squares.size(); k++) {
-//             if (circles.at(i)[0] > squares.at(k)[0].x && 
-//                 circles.at(i)[0] < squares.at(k)[1].x &&
-//                 circles.at(i)[1] > squares.at(k)[0].y &&
-//                 circles.at(i)[1] < squares.at(k)[1].y) {
-//                 circles.erase(circles.begin()+i-skew);
-//                 skew++;
-//                 i++;
-//             }
-//         }
-//     }
-// }
-
-static void drawCircles(Mat& image, vector<Vec3f>& circles) {
+void drawCircles(Mat& image, vector<Vec3f>& circles)
+{
     for( size_t i = 0; i < circles.size(); i++ )
     {
         Vec3i c = circles[i];
@@ -111,13 +90,11 @@ static void drawCircles(Mat& image, vector<Vec3f>& circles) {
         // circle outline
         int radius = c[2];
         circle( image, center, radius, Scalar(255,0,255), 3, LINE_AA);
-    }
-    
-    imwrite("circleOutput.jpg", image);
+    }    
 }
 
 // the function draws all the squares in the image
-static void drawSquares(Mat& image, const vector<vector<Point>>& squares)
+void drawSquares(Mat& image, const vector<vector<Point>>& squares)
 {
     for(size_t i = 0; i < squares.size(); i++)
     {
@@ -125,10 +102,14 @@ static void drawSquares(Mat& image, const vector<vector<Point>>& squares)
         int n = (int)squares[i].size();
         polylines(image, &p, &n, 1, true, Scalar(0,200,0), 9, LINE_AA);
     }
-    // imwrite("output.jpg", image);
 }
 
-static void writeCoords(const vector<vector<Point>>& squares, const vector<Vec3f>& circles, string outPath, double scale) {
+void writeCoords(
+    const vector<vector<Point>>& squares,
+    const vector<Vec3f>& circles,
+    string outPath, 
+    double scale)
+{
     ofstream cmdout;
     cmdout.open(outPath);
     
@@ -145,42 +126,4 @@ static void writeCoords(const vector<vector<Point>>& squares, const vector<Vec3f
     }
 
     cmdout.close();
-}
-
-
-// static void findFills(Mat& image/*, vector<vector<Point>>& fillSquares*/)
-// {
-//     Mat channel[3];
-//     split(image, channel);
-//     channel[0]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set blue channel to 0
-//     channel[1]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set green channel to 0
-//     channel[2]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set red channel to 0
-
-//     merge(channel,3,image);
-    
-//     vector<vector<Point>> bricks;
-
-//     findSquares(image, bricks);
-//     drawSquares(image, bricks);
-// }
-
-int main(int argc, char** argv)
-{
-    vector<vector<Point>> squares;
-
-    vector<Vec3f> circles;
-
-    string filename = samples::findFile(argv[1]);
-    Mat image = imread(filename, IMREAD_COLOR);
-    if(image.empty())
-        cout << "Couldn't load " << filename << endl;
-        
-    findSquares(image, squares);
-    findCircles(image, circles);
-    // detectOverlap(squares, circles);
-    drawSquares(image, squares);
-    drawCircles(image, circles);
-    writeCoords(squares, circles, argv[2], 0.1);
-    
-    return 0;
 }

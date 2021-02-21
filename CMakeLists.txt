@@ -6,6 +6,10 @@ find_package( OpenCV REQUIRED )
 #find_package(Qt COMPONENTS QtOpenGL QtXml REQUIRED)
 #find_package(OpenCL REQUIRED)
 include_directories( ${OpenCV_INCLUDE_DIRS} )
-set( SOURCES *.cpp *.h )
+#set( SOURCES src/*.cpp include/*.h )
+
 add_executable( squares src/squares.cpp )
 target_link_libraries( squares ${OpenCV_LIBS} )
+
+add_executable( main src/main.cpp )
+target_link_libraries( main ${OpenCV_LIBS} )
