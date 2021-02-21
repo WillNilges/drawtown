@@ -130,6 +130,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named squares
+
+# Build rule for target.
+squares: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 squares
+.PHONY : squares
+
+# fast build rule for target.
+squares/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/build
+.PHONY : squares/fast
+
+#=============================================================================
 # Target rules for targets named test2
 
 # Build rule for target.
@@ -141,6 +154,33 @@ test2: cmake_check_build_system
 test2/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/build
 .PHONY : test2/fast
+
+squares.o: squares.cpp.o
+
+.PHONY : squares.o
+
+# target to build an object file
+squares.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/squares.cpp.o
+.PHONY : squares.cpp.o
+
+squares.i: squares.cpp.i
+
+.PHONY : squares.i
+
+# target to preprocess a source file
+squares.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/squares.cpp.i
+.PHONY : squares.cpp.i
+
+squares.s: squares.cpp.s
+
+.PHONY : squares.s
+
+# target to generate assembly for a file
+squares.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/squares.cpp.s
+.PHONY : squares.cpp.s
 
 test2.o: test2.cpp.o
 
@@ -177,7 +217,11 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... squares"
 	@echo "... test2"
+	@echo "... squares.o"
+	@echo "... squares.i"
+	@echo "... squares.s"
 	@echo "... test2.o"
 	@echo "... test2.i"
 	@echo "... test2.s"

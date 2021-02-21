@@ -2,30 +2,23 @@
 
 
 int main() {    
-    cv::Mat img = cv::imread("tiddy2.jpg");   // Read the file
-    double threshold = 60; // needs adjustment.
+    cv::Mat img = cv::imread("img/tiddy3.jpg");   // Read the file
+    double threshold = 40; // needs adjustment.
     int n_erode_dilate = 1; // needs adjustment.
 
     cv::Mat m = img.clone();
     cv::cvtColor(m, m, cv::COLOR_RGB2GRAY); // convert to grayscale image.
-    cv::blur(m, m, cv::Size(5,5));
+    imwrite("tmp0.jpg", m);
+    cv::blur(m, m, cv::Size(30,30));
     cv::threshold(m, m, threshold, 255, cv::THRESH_BINARY_INV);
+    // cv::adaptiveThreshold(m, m, threshold, cv::ADAPTIVE_THRESH_GAUSSIAN_C,cv::THRESH_BINARY, 13, 0);
     imwrite("tmp1.jpg", m);
     cv::erode(m, m, cv::Mat(),cv::Point(-1,-1),n_erode_dilate);
     cv::dilate(m, m, cv::Mat(),cv::Point(-1,-1),n_erode_dilate);
 
     std::vector< std::vector<cv::Point> > contours;
-    std::vector<cv::Point> points;
+    // std::vector<Vec4i> hierarchy;
     cv::findContours(m, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-    for (size_t i=0; i<contours.size(); i++) {
-        for (size_t j = 0; j < contours[i].size(); j++) {
-            cv::Point p = contours[i][j];
-            points.push_back(p);
-        }
-    }
-    // And process the points or contours to pick up specified object.
-
-
 
     for (std::vector<cv::Point> contour : contours){
         // Get the stright bounding rect
@@ -42,5 +35,4 @@ int main() {
     }
 
     imwrite("tmp2.jpg", img);
-
 }

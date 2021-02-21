@@ -16,7 +16,8 @@
 *.dylib
 *.dll
 
-# Fortran module files
+# Fortran module filesCMakeFiles/*
+
 *.mod
 *.smod
 
