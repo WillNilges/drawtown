@@ -25,8 +25,7 @@ void writeCoords(
     const Mat& image,
     const vector<vector<Point>>& squares,
     const vector<Vec3f>& circles,
-    string outPath,
-    double scale
+    string outPath
 );
 
 }
