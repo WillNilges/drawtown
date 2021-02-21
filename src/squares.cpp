@@ -112,7 +112,7 @@ void writeCoords(
     ofstream cmdout;
     cmdout.open(outPath);
 
-    cmdout << "r default:dirt_with_grass@0,0 " << (int) (image.rows * scale) << "," << (int) (image.cols * scale) << "\n";
+    cmdout << "r default:dirt_with_grass@0,0 " << (int) (image.cols * scale) << "," << (int) (image.rows * scale) << "\n";
     
     for (vector<Point> square : squares) {
         // s logcabin1@20,10,12
