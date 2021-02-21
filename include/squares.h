@@ -19,12 +19,13 @@ void drawCircles(Mat& image, vector<Vec3f>& circles);
 
 void drawSquares(Mat& image, const vector<vector<Point>>& squares);
 
+void out(const Mat& image);
+
 void writeCoords(
     const Mat& image,
     const vector<vector<Point>>& squares,
     const vector<Vec3f>& circles,
-    string outPath,
-    double scale
+    string outPath
 );
 
 }

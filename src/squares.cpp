@@ -102,13 +102,29 @@ void drawSquares(Mat& image, const vector<vector<Point>>& squares)
     }
 }
 
+void out(const Mat& image) {
+    imwrite("result.jpg", image);
+}
+
 void writeCoords(
     const Mat& image,
     const vector<vector<Point>>& squares,
     const vector<Vec3f>& circles,
-    string outPath,
-    double scale)
+    string outPath)
 {
+
+    int realX = image.cols;
+    int realY = image.rows;
+
+    double scale = 0.0;
+
+    int idealScale = 250;
+
+    if (realX > realY) scale = (double) idealScale/realX;
+    else scale = (double) idealScale/realY;
+
+    // it's a (y, x) system!
+
     ofstream cmdout;
     cmdout.open(outPath);
 
