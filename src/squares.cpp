@@ -22,7 +22,7 @@ static double angle(Point pt1, Point pt2, Point pt0)
 }
 
 // returns sequence of squares detected on the image.
-static void findSquares(const Mat& image, vector<vector<Point> >& squares)
+static void findStructures(Mat& image, vector<vector<Point> >& squares)
 {
     squares.clear();
     Mat pyr, timg, gray0(image.size(), CV_8U), gray;
@@ -37,7 +37,7 @@ static void findSquares(const Mat& image, vector<vector<Point> >& squares)
     imwrite("tmp1.jpg", gray0);
     gray = gray0 >= (4+1)*255/N;
     // find contours and store them all as a list
-    findContours(gray, contours, hierarchy, RETR_CCOMP, CHAIN_AP( PROX_SIMPLE);
+    findContours(gray, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 
     vector<Point> approx;
     // test each contour
@@ -84,7 +84,7 @@ static void drawSquares(Mat& image, const vector<vector<Point>>& squares)
     imwrite("output.jpg", image);
 }
 
-static void writeCoords(const vector<vector<Point>>& squares, string outPath) {
+static void writeCoords(const vector<vector<Point>>& squares, string outPath, double scale) {
     ofstream cmdout;
     cmdout.open(outPath);
     
@@ -92,22 +92,41 @@ static void writeCoords(const vector<vector<Point>>& squares, string outPath) {
         // s logcabin1@20,10,12
         // in CV --->  x     y        
         string building = "logcabin1";
-        cmdout << "s " << building << "@" << square.at(0).x << ",0," << square.at(0).y;
+        cmdout << "s " << building << "@" << (int) (square.at(0).x * scale) << ",0," << (int) (square.at(0).y * scale) << "\n";
     }
 
     cmdout.close();
 }
 
+
+// static void findFills(Mat& image/*, vector<vector<Point>>& fillSquares*/)
+// {
+//     Mat channel[3];
+//     split(image, channel);
+//     channel[0]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set blue channel to 0
+//     channel[1]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set green channel to 0
+//     channel[2]=Mat::zeros(image.rows, image.cols, CV_8UC1);//Set red channel to 0
+
+//     merge(channel,3,image);
+    
+//     vector<vector<Point>> bricks;
+
+//     findStructures(image, bricks);
+//     drawSquares(image, bricks);
+// }
+
 int main(int argc, char** argv)
 {
-    vector<vector<Point>> squares;
+    vector<vector<Point>> structures;
 
     string filename = samples::findFile(argv[1]);
     Mat image = imread(filename, IMREAD_COLOR);
     if(image.empty())
         cout << "Couldn't load " << filename << endl;
-    findSquares(image, squares);
-    // drawSquares(image, squares);
-    writeCoords(squares, argv[2]);
+        
+    findStructures(image, structures);
+    drawSquares(image, structures);
+    // writeCoords(squares, argv[2], 0.1);
+    // findFills(image);
     return 0;
 }
