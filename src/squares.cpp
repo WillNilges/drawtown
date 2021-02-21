@@ -103,25 +103,38 @@ void drawSquares(Mat& image, const vector<vector<Point>>& squares)
 }
 
 void writeCoords(
+    const Mat& image,
     const vector<vector<Point>>& squares,
     const vector<Vec3f>& circles,
-    string outPath, 
+    string outPath,
     double scale)
 {
     ofstream cmdout;
     cmdout.open(outPath);
+
+    cmdout << "r default:dirt_with_grass@0,0 " << (int) (image.rows * scale) << "," << (int) (image.cols * scale) << "\n";
     
     for (vector<Point> square : squares) {
         // s logcabin1@20,10,12
-        // in CV --->  x     y        
-        string building = "logcabin1";
-        cmdout << "s " << building << "@" << (int) (square.at(0).x * scale) << ",0," << (int) (square.at(0).y * scale) << "\n";
+        // in CV --->  x     y    
+        int build = square.at(0).x % 2;
+        string building;
+        switch (build) {
+            case 0:
+                building = "tower";
+                break;
+            default:
+                building = "cabin";
+        }
+        cmdout << "s " << building << "@" << (int) (square.at(0).x * scale) << "," << (int) (square.at(0).y * scale) << "\n";
     }
 
     for (Vec3f circle : circles) {
-        string building = "forest1";
-        cmdout << "s " << building << "@" << (int) (circle[0] * scale) << ",0," << (int) (circle[1] * scale) << "\n";
+        string building = "forest";
+        cmdout << "s " << building << "@" << (int) (circle[0] * scale) << "," << (int) (circle[1] * scale) << "\n";
     }
+
+    cmdout << "\n";
 
     cmdout.close();
 }

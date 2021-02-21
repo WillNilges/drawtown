@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     DrawTown::findCircles(image, circles);
     DrawTown::drawSquares(image, squares);
     DrawTown::drawCircles(image, circles);
-    DrawTown::writeCoords(squares, circles, argv[2], 0.1);
+    DrawTown::writeCoords(image, squares, circles, argv[2], stod(argv[3]));
 
     return 0;
 }
