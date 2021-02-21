@@ -102,6 +102,10 @@ void drawSquares(Mat& image, const vector<vector<Point>>& squares)
     }
 }
 
+void out(const Mat& image) {
+    imwrite("result.jpg", image);
+}
+
 void writeCoords(
     const Mat& image,
     const vector<vector<Point>>& squares,
