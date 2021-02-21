@@ -130,19 +130,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test4
-
-# Build rule for target.
-test4: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test4
-.PHONY : test4
-
-# fast build rule for target.
-test4/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test4.dir/build.make CMakeFiles/test4.dir/build
-.PHONY : test4/fast
-
-#=============================================================================
 # Target rules for targets named squares
 
 # Build rule for target.
@@ -155,99 +142,32 @@ squares/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/build
 .PHONY : squares/fast
 
-#=============================================================================
-# Target rules for targets named test2
+src/squares.o: src/squares.cpp.o
 
-# Build rule for target.
-test2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test2
-.PHONY : test2
-
-# fast build rule for target.
-test2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/build
-.PHONY : test2/fast
-
-squares.o: squares.cpp.o
-
-.PHONY : squares.o
+.PHONY : src/squares.o
 
 # target to build an object file
-squares.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/squares.cpp.o
-.PHONY : squares.cpp.o
+src/squares.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/src/squares.cpp.o
+.PHONY : src/squares.cpp.o
 
-squares.i: squares.cpp.i
+src/squares.i: src/squares.cpp.i
 
-.PHONY : squares.i
-
-# target to preprocess a source file
-squares.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/squares.cpp.i
-.PHONY : squares.cpp.i
-
-squares.s: squares.cpp.s
-
-.PHONY : squares.s
-
-# target to generate assembly for a file
-squares.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/squares.cpp.s
-.PHONY : squares.cpp.s
-
-test2.o: test2.cpp.o
-
-.PHONY : test2.o
-
-# target to build an object file
-test2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/test2.cpp.o
-.PHONY : test2.cpp.o
-
-test2.i: test2.cpp.i
-
-.PHONY : test2.i
+.PHONY : src/squares.i
 
 # target to preprocess a source file
-test2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/test2.cpp.i
-.PHONY : test2.cpp.i
+src/squares.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/src/squares.cpp.i
+.PHONY : src/squares.cpp.i
 
-test2.s: test2.cpp.s
+src/squares.s: src/squares.cpp.s
 
-.PHONY : test2.s
-
-# target to generate assembly for a file
-test2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/test2.cpp.s
-.PHONY : test2.cpp.s
-
-test4.o: test4.cpp.o
-
-.PHONY : test4.o
-
-# target to build an object file
-test4.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test4.dir/build.make CMakeFiles/test4.dir/test4.cpp.o
-.PHONY : test4.cpp.o
-
-test4.i: test4.cpp.i
-
-.PHONY : test4.i
-
-# target to preprocess a source file
-test4.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test4.dir/build.make CMakeFiles/test4.dir/test4.cpp.i
-.PHONY : test4.cpp.i
-
-test4.s: test4.cpp.s
-
-.PHONY : test4.s
+.PHONY : src/squares.s
 
 # target to generate assembly for a file
-test4.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test4.dir/build.make CMakeFiles/test4.dir/test4.cpp.s
-.PHONY : test4.cpp.s
+src/squares.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/squares.dir/build.make CMakeFiles/squares.dir/src/squares.cpp.s
+.PHONY : src/squares.cpp.s
 
 # Help Target
 help:
@@ -258,17 +178,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... squares"
-	@echo "... test2"
-	@echo "... test4"
-	@echo "... squares.o"
-	@echo "... squares.i"
-	@echo "... squares.s"
-	@echo "... test2.o"
-	@echo "... test2.i"
-	@echo "... test2.s"
-	@echo "... test4.o"
-	@echo "... test4.i"
-	@echo "... test4.s"
+	@echo "... src/squares.o"
+	@echo "... src/squares.i"
+	@echo "... src/squares.s"
 .PHONY : help
 
 
