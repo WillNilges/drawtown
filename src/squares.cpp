@@ -79,10 +79,27 @@ static void findCircles(Mat& image, vector<Vec3f>& circles) {
     // vector<Vec3f> circles;
     HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
                  gray.rows/12,  // change this value to detect circles with different distances to each other
-                 100, 30, 30, 400 // change the last two parameters
+                 100, 30, 30, 200 // change the last two parameters
             // (min_radius & max_radius) to detect larger circles
     );
 }
+
+// If a tree and a house get in a fight, the house wins.
+// static void detectOverlap(vector<vector<Point>>& squares, vector<Vec3f> circles) {
+//     int skew = 0;
+//     for (int i = 0; i < circles.size(); i++) {
+//         for (int k = 0; k < squares.size(); k++) {
+//             if (circles.at(i)[0] > squares.at(k)[0].x && 
+//                 circles.at(i)[0] < squares.at(k)[1].x &&
+//                 circles.at(i)[1] > squares.at(k)[0].y &&
+//                 circles.at(i)[1] < squares.at(k)[1].y) {
+//                 circles.erase(circles.begin()+i-skew);
+//                 skew++;
+//                 i++;
+//             }
+//         }
+//     }
+// }
 
 static void drawCircles(Mat& image, vector<Vec3f>& circles) {
     for( size_t i = 0; i < circles.size(); i++ )
@@ -111,7 +128,7 @@ static void drawSquares(Mat& image, const vector<vector<Point>>& squares)
     // imwrite("output.jpg", image);
 }
 
-static void writeCoords(const vector<vector<Point>>& squares, string outPath, double scale) {
+static void writeCoords(const vector<vector<Point>>& squares, const vector<Vec3f>& circles, string outPath, double scale) {
     ofstream cmdout;
     cmdout.open(outPath);
     
@@ -120,6 +137,11 @@ static void writeCoords(const vector<vector<Point>>& squares, string outPath, do
         // in CV --->  x     y        
         string building = "logcabin1";
         cmdout << "s " << building << "@" << (int) (square.at(0).x * scale) << ",0," << (int) (square.at(0).y * scale) << "\n";
+    }
+
+    for (Vec3f circle : circles) {
+        string building = "forest1";
+        cmdout << "s " << building << "@" << (int) (circle[0] * scale) << ",0," << (int) (circle[1] * scale) << "\n";
     }
 
     cmdout.close();
@@ -144,7 +166,7 @@ static void writeCoords(const vector<vector<Point>>& squares, string outPath, do
 
 int main(int argc, char** argv)
 {
-    vector<vector<Point>> structures;
+    vector<vector<Point>> squares;
 
     vector<Vec3f> circles;
 
@@ -153,12 +175,12 @@ int main(int argc, char** argv)
     if(image.empty())
         cout << "Couldn't load " << filename << endl;
         
-    findSquares(image, structures);
+    findSquares(image, squares);
     findCircles(image, circles);
-    drawSquares(image, structures);
+    // detectOverlap(squares, circles);
+    drawSquares(image, squares);
     drawCircles(image, circles);
-    // writeCoords(squares, argv[2], 0.1);
-    // findFills(image);
+    writeCoords(squares, circles, argv[2], 0.1);
     
     return 0;
 }
