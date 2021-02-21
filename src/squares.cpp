@@ -22,7 +22,7 @@ static double angle(Point pt1, Point pt2, Point pt0)
 }
 
 // returns sequence of squares detected on the image.
-static void findStructures(Mat& image, vector<vector<Point> >& squares)
+static void findSquares(Mat& image, vector<vector<Point>>& squares)
 {
     squares.clear();
     Mat pyr, timg, gray0(image.size(), CV_8U), gray;
@@ -72,17 +72,19 @@ static void findStructures(Mat& image, vector<vector<Point> >& squares)
     }
 }
 
-static void findCircles(Mat& image) {
+static void findCircles(Mat& image, vector<Vec3f>& circles) {
     Mat gray;
     cvtColor(image, gray, COLOR_BGR2GRAY);
     medianBlur(gray, gray, 5);
-    vector<Vec3f> circles;
+    // vector<Vec3f> circles;
     HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
-                 gray.rows/8,  // change this value to detect circles with different distances to each other
+                 gray.rows/12,  // change this value to detect circles with different distances to each other
                  100, 30, 30, 400 // change the last two parameters
             // (min_radius & max_radius) to detect larger circles
     );
+}
 
+static void drawCircles(Mat& image, vector<Vec3f>& circles) {
     for( size_t i = 0; i < circles.size(); i++ )
     {
         Vec3i c = circles[i];
@@ -95,7 +97,6 @@ static void findCircles(Mat& image) {
     }
     
     imwrite("circleOutput.jpg", image);
-
 }
 
 // the function draws all the squares in the image
@@ -137,7 +138,7 @@ static void writeCoords(const vector<vector<Point>>& squares, string outPath, do
     
 //     vector<vector<Point>> bricks;
 
-//     findStructures(image, bricks);
+//     findSquares(image, bricks);
 //     drawSquares(image, bricks);
 // }
 
@@ -145,15 +146,17 @@ int main(int argc, char** argv)
 {
     vector<vector<Point>> structures;
 
+    vector<Vec3f> circles;
+
     string filename = samples::findFile(argv[1]);
     Mat image = imread(filename, IMREAD_COLOR);
     if(image.empty())
         cout << "Couldn't load " << filename << endl;
         
-    findStructures(image, structures);
+    findSquares(image, structures);
+    findCircles(image, circles);
     drawSquares(image, structures);
-    findCircles(image);
-    // drawCircles(image);
+    drawCircles(image, circles);
     // writeCoords(squares, argv[2], 0.1);
     // findFills(image);
     
