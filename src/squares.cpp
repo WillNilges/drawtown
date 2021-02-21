@@ -1,12 +1,10 @@
 #include "squares.h"
 int thresh = 50, N = 11;
 
-using namespace DrawTown;
-
 // helper function:
 // finds a cosine of angle between vectors
 // from pt0->pt1 and from pt0->pt2
-double dankAngle(Point pt1, Point pt2, Point pt0)
+double angle(Point pt1, Point pt2, Point pt0)
 {
     double dx1 = pt1.x - pt0.x;
     double dy1 = pt1.y - pt0.y;
@@ -15,8 +13,9 @@ double dankAngle(Point pt1, Point pt2, Point pt0)
     return (dx1*dx2 + dy1*dy2)/sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
 
+namespace DrawTown {
 // returns sequence of squares detected on the image.
-void findSquares(Mat& image, vector<vector<Point>>& squares)
+void findSquares(const Mat& image, vector<vector<Point>>& squares)
 {
     squares.clear();
     Mat pyr, timg, gray0(image.size(), CV_8U), gray;
@@ -54,7 +53,7 @@ void findSquares(Mat& image, vector<vector<Point>>& squares)
             for(int j = 2; j < 5; j++)
             {
                 // find the maximum cosine of the angle between joint edges
-                double cosine = fabs(dankAngle(approx[j%4], approx[j-2], approx[j-1]));
+                double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
                 maxCosine = MAX(maxCosine, cosine);
             }
             // if cosines of all angles are small
@@ -66,7 +65,7 @@ void findSquares(Mat& image, vector<vector<Point>>& squares)
     }
 }
 
-void findCircles(Mat& image, vector<Vec3f>& circles)
+void findCircles(const Mat& image, vector<Vec3f>& circles)
 {
     Mat gray;
     cvtColor(image, gray, COLOR_BGR2GRAY);
@@ -126,4 +125,5 @@ void writeCoords(
     }
 
     cmdout.close();
+}
 }

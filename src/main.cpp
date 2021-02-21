@@ -1,7 +1,5 @@
 #include "squares.h"
 
-using namespace DrawTown;
-
 int main(int argc, char** argv)
 {
     vector<vector<Point>> squares;
@@ -13,11 +11,11 @@ int main(int argc, char** argv)
     if(image.empty())
         cout << "Couldn't load " << filename << endl;
 
-    findSquares(image, squares);
-    findCircles(image, circles);
-    drawSquares(image, squares);
-    drawCircles(image, circles);
-    writeCoords(squares, circles, argv[2], 0.1);
-    
+    DrawTown::findSquares(image, squares);
+    DrawTown::findCircles(image, circles);
+    DrawTown::drawSquares(image, squares);
+    DrawTown::drawCircles(image, circles);
+    DrawTown::writeCoords(squares, circles, argv[2], 0.1);
+
     return 0;
 }

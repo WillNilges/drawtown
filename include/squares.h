@@ -1,6 +1,6 @@
-#include "opencv2/core.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/imgcodecs.hpp"
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
 // #include "opencv2/highgui.hpp"
 #include <iostream>
 #include <fstream>
@@ -10,8 +10,6 @@ using namespace std;
 
 namespace DrawTown
 {
-
-double angle(Point pt1, Point pt2, Point pt0);
 
 void findSquares(const Mat& image, vector<vector<Point>>& squares);
 

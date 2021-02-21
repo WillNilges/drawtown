@@ -1,15 +1,11 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 set ( CMAKE_CXX_STANDARD 11 )
-project( cpp_code )
+project( drawtown )
 find_package( OpenCV REQUIRED )
-#find_package(OPENCV COMPONENTS core imgproc highgui REQUIRED)
-#find_package(Qt COMPONENTS QtOpenGL QtXml REQUIRED)
-#find_package(OpenCL REQUIRED)
+
 include_directories( ${OpenCV_INCLUDE_DIRS} )
-#set( SOURCES src/*.cpp include/*.h )
+include_directories( include/ )
+file( GLOB SOURCES src/*.cpp )
 
-add_executable( squares src/squares.cpp )
-target_link_libraries( squares ${OpenCV_LIBS} )
-
-add_executable( main src/main.cpp )
-target_link_libraries( main ${OpenCV_LIBS} )
+add_executable( drawtown ${SOURCES} )
+target_link_libraries( drawtown ${OpenCV_LIBS} )
