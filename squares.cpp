@@ -35,25 +35,25 @@ static void findSquares( const Mat& image, vector<vector<Point> >& squares )
         int ch[] = {c, 0};
         mixChannels(&timg, 1, &gray0, 1, ch, 1);
         // try several threshold levels
-        for( int l = 0; l < N; l++ )
-        {
+        // for( int l = 0; l < N; l++ )
+        // {
             // hack: use Canny instead of zero threshold level.
             // Canny helps to catch squares with gradient shading
-            if( l == 0 )
-            {
+            // if( l == 0 )
+            // {
                 // apply Canny. Take the upper threshold from slider
                 // and set the lower to 0 (which forces edges merging)
                 Canny(gray0, gray, 0, thresh, 5);
                 // dilate canny output to remove potential
                 // holes between edge segments
                 dilate(gray, gray, Mat(), Point(-1,-1));
-            }
-            else
-            {
-                // apply threshold if l!=0:
-                //     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
-                gray = gray0 >= (l+1)*255/N;
-            }
+            // }
+            // else
+            // {
+            //     // apply threshold if l!=0:
+            //     //     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
+            //     gray = gray0 >= (l+1)*255/N;
+            // }
             // find contours and store them all as a list
             findContours(gray, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 
@@ -84,27 +84,26 @@ static void findSquares( const Mat& image, vector<vector<Point> >& squares )
                     // if cosines of all angles are small
                     // (all angles are ~90 degree) then write quandrange
                     // vertices to resultant sequence
-                    if( maxCosine < 0.1)
-                        std::cout << "fuck you.\n";
-                        if (squares.size() > 0){
-                            for ( vector<Point> square : squares ) {
-                                std::cout << "ARGH.\n";
+                    if( maxCosine < 0.1 && hierarchy[i][3] >= 0 )
+                        // std::cout << "fuck you.\n";
+                        // if (squares.size() > 0){
+                            // for ( vector<Point> square : squares ) {
+                                // std::cout << "ARGH.\n";
                                 // Make sure we're only taking one square from a particular shape (don't ask).
-                                cout << std::abs(square.at(0).x - approx.at(0).x) << " , " << std::abs(square.at(0).y - approx.at(0).y) << "\n";
-                                if (std::abs(square.at(0).x - approx.at(0).x) > 1500
-                                && std::abs(square.at(0).y - approx.at(0).y) > 1500) {
-                                    std::cout << "Adding.\n";
-                                    squares.push_back(approx);
-                                    break;
-                                }
-                            }
-                        } else {
-                            std::cout << "youre such a fucking whore.\n";
+                                // cout << std::abs(square.at(0).x - approx.at(0).x) << " , " << std::abs(square.at(0).y - approx.at(0).y) << "\n";
+                                // if (std::abs(square.at(0).x - approx.at(0).x) > 1500 && std::abs(square.at(0).y - approx.at(0).y) > 1500) {
+                                    // std::cout << "Adding.\n";
+                                    // squares.push_back(approx);
+                                    // break;
+                                // }
+                            // }
+                        // } else {
+                            // std::cout << "youre such a fucking whore.\n";h
                             squares.push_back(approx);
-                        }
+                        // }
                 }
             }
-        }
+        // }
     // }
 }
 // the function draws all the squares in the image
