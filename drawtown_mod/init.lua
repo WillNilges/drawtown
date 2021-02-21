@@ -27,7 +27,7 @@ if not rawget(_G, "jit") and package.config:sub(1, 1) == "/" then
 end
 
 Schematics = {}
-for _, sch in ipairs({"cabin","tower","tent", "shed"}) do
+for _, sch in ipairs({"cabin","tower","tent", "shed", "forest"}) do
     Schematics[sch] = minetest.register_schematic("schems/"..sch..".mts")
 end
 
@@ -42,6 +42,7 @@ local clients = {}
 
 local pn = math.random(0,9)
 assert(server:bind("127.0.0.1",30210+pn))
+print("Listening on :"..30210+pn)
 server:settimeout(0.01)
 assert(server:listen())
 
@@ -130,7 +131,7 @@ local function step()
             if not err then
                 print("Got line: " .. data)
 
-                local cmd, name, x1, z1, x2, z2 = string.match(data, "(%a) ([%w:]*)@(%d*),(%d*) (%d*),(%d*)")
+                local cmd, name, x1, z1, x2, z2 = string.match(data, "(%a) ([%w_:]*)@(%d*),(%d*) (%d*),(%d*)")
                 if cmd ~= nil then
                     local coords1 = {}
                     coords1["x"]=tonumber(x1) or 0
@@ -169,7 +170,7 @@ local function step()
                     return
                 end
 
-                local cmd, name, x, z = string.match(data, "(%a) ([%w:]*)@(%d*),(%d*)")
+                local cmd, name, x, z = string.match(data, "(%a) ([%w_:]*)@(%d*),(%d*)")
                 if cmd ~= nil then
                     local coords = {}
                     coords["x"]=tonumber(x) or 0
